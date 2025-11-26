@@ -1,0 +1,6 @@
+flask
+flask-cors
+yagmail
+requests
+python-dotenv
+gunicorn
