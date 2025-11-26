@@ -1,0 +1,23 @@
+# -----------------------------
+# Ignore sensitive files
+# -----------------------------
+.env
+*.env
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.pyc
+env/
+venv/
+.venv/
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
+
+# System
+.DS_Store
