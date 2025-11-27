@@ -11,7 +11,8 @@ load_dotenv()
 
 # ---------------------- FLASK APP ----------------------
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
 
 # ---------------------- LLM CONFIG ----------------------
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -44,7 +45,7 @@ KNOWN FACTS:
 - Abhayam was founded in 2012.
 - Conducts free healthcare camps.
 - Helps families through funds and services.
-- Official Email: abhayam@gmail.com
+- Official Email: abhayam888@gmail.com
 - Contact Number: 9400601492
 - GPay Number: 9400601492
 
