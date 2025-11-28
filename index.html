@@ -690,7 +690,7 @@ document.querySelector('.contact-form').addEventListener('submit', async functio
 
     // prevent weird preflight triggers: only proceed when user actually clicked submit
     // (browsers usually set e.submitter for real button submits)
-    if (typeof e.submitter === "undefined") return;
+    
 
     const form = e.target;
 
