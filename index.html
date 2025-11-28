@@ -671,59 +671,55 @@
         </div>
     </section>-->
 
-    <section class="contact" id="contact">
-        <h2 class="section-title">Get In Touch</h2>
-        <p class="section-subtitle">Join us in making a difference</p>
-        <form class="contact-form">
+<section class="contact" id="contact">
+    <h2 class="section-title">Get In Touch</h2>
+    <p class="section-subtitle">Join us in making a difference</p>
 
-            <!-- disable captcha -->
-            <input type="hidden" name="_captcha" value="false">
-
-            <!-- redirect to thank-you page (optional) -->
-            <input type="hidden" name="_next" value="">
-
-            <input type="text" name="name" placeholder="Your Name" required>
-            <input type="email" name="email" placeholder="Your Email" required>
-            <input type="tel" name="phone" placeholder="Phone Number">
-            <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
-
+    <form class="contact-form">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <input type="tel" name="phone" placeholder="Phone Number">
+        <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
         <button type="submit">SEND MESSAGE</button>
-        </form>
+    </form>
+</section>
 
-        <script>
-        document.querySelector('.contact-form').addEventListener('submit', async function(e){
-            e.preventDefault();
+<script>
+document.querySelector('.contact-form').addEventListener('submit', async function(e){
+    e.preventDefault();
 
-            const form = e.target;
+    const form = e.target;
 
-            const data = {
-                name: form.name.value,
-                email: form.email.value,
-                phone: form.phone.value,
-                message: form.message.value
-            };
+    const data = {
+        name: form.name.value,
+        email: form.email.value,
+        phone: form.phone.value,
+        message: form.message.value
+    };
 
-            const res = await fetch("https://abhayam-backend.onrender.com/send_email", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(data)
-            });
+    try {
+        const res = await fetch("https://abhayam-backend.onrender.com/send_email", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(data)
+        });
 
-            const result = await res.json();
+        const result = await res.json();
 
-            if(result.status === "success") {
-                alert("❤️ Your message has been sent successfully!");
-                form.reset();
-            }       
-            else {
-                alert("❌ Failed to send email.");
-                console.error(result.msg);
+        if(result.status === "success") {
+            alert("❤️ Your message has been sent successfully!");
+            form.reset();
+        } else {
+            alert("❌ Failed to send email.");
+            console.log(result);
         }
+    } catch (err) {
+        alert("❌ Failed to send email.");
+        console.error(err);
+    }
 });
 </script>
 
-
-    </section>
 
     <!-- QR Code Modal -->
     <div class="modal" id="donateModal">
