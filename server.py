@@ -4,10 +4,6 @@ from flask_cors import CORS, cross_origin
 import requests
 import os
 import requests
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
 
 # ---------------------- FLASK APP ----------------------
 app = Flask(__name__)
