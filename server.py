@@ -18,8 +18,17 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # ---------------------- EMAIL CONFIG ----------------------
-YOUR_EMAIL = os.getenv("MAIL_USER")          # from .env
-APP_PASSWORD = os.getenv("MAIL_APP_PASSWORD") # from .env
+YOUR_EMAIL = os.getenv("MAIL_USER")
+APP_PASSWORD = os.getenv("MAIL_APP_PASSWORD")
+
+# Email client setup with error handling
+try:
+    yag = yagmail.SMTP(YOUR_EMAIL, APP_PASSWORD)
+    print("✅ Email login successful")
+except Exception as e:
+    print("❌ EMAIL LOGIN FAILED:", e)
+    yag = None   # prevent crash
+
 
 # email client
 yag = yagmail.SMTP(YOUR_EMAIL, APP_PASSWORD)
@@ -97,6 +106,9 @@ RULES:
 @app.route("/send_email", methods=["POST"])
 def send_email():
     try:
+        if yag is None:
+            return jsonify({"status": "error", "msg": "Email login failed on server"})
+
         data = request.json
 
         name = data.get("name", "Unknown")
@@ -121,11 +133,12 @@ Message:
             contents=body
         )
 
-        return jsonify({"status": "success", "msg": "Email sent"})
+        return jsonify({"status": "success", "msg": "Email sent successfully"})
 
     except Exception as e:
-        print("EMAIL ERROR:", e)
+        print("EMAIL SEND ERROR:", e)
         return jsonify({"status": "error", "msg": str(e)})
+
 
 
 # ======================================================
