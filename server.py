@@ -98,13 +98,15 @@ RULES:
 # ======================================================
 #                  📩 EMAIL ENDPOINT
 # ======================================================
+# ======================================================
+#                  📩 EMAIL ENDPOINT (BREVO)
+# ======================================================
 @app.route("/send_email", methods=["POST", "OPTIONS"])
 @cross_origin()
 def send_email():
     try:
         if request.method == "OPTIONS":
-            # Reply to preflight quickly
-            return jsonify({"status":"ok"}), 200
+            return jsonify({"status": "ok"}), 200
 
         data = request.json
         name = data.get("name", "Unknown")
@@ -112,29 +114,39 @@ def send_email():
         phone = data.get("phone", "No Phone")
         message = data.get("message", "")
 
-        body = f"""
-📩 New ABHAYAM Website Message
+        # Brevo API URL
+        url = "https://api.brevo.com/v3/smtp/email"
 
-Name: {name}
-Email: {email}
-Phone: {phone}
+        payload = {
+            "sender": {"name": "ABHAYAM Website", "email": RECEIVER_EMAIL},
+            "to": [{"email": RECEIVER_EMAIL}],
+            "subject": "📬 New ABHAYAM Website Enquiry",
+            "htmlContent": f"""
+                <h3>New Website Contact Message</h3>
+                <p><b>Name:</b> {name}</p>
+                <p><b>Email:</b> {email}</p>
+                <p><b>Phone:</b> {phone}</p>
+                <p><b>Message:</b><br>{message}</p>
+            """
+        }
 
-Message:
-{message}
-"""
+        headers = {
+            "api-key": BREVO_API_KEY,
+            "Content-Type": "application/json"
+        }
 
-        yag.send(
-            to=YOUR_EMAIL,
-            subject="📬 New ABHAYAM Website Enquiry",
-            contents=body
-        )
+        response = requests.post(url, json=payload, headers=headers)
+        print("BREVO RESPONSE:", response.text)
 
-        return jsonify({"status": "success", "msg": "Email sent"})
+        if response.status_code == 201:
+            return jsonify({"status": "success", "msg": "Email sent"})
+        else:
+            return jsonify({"status": "error", "msg": response.text}), 500
 
     except Exception as e:
         print("EMAIL ERROR:", e)
-        # return a JSON error so frontend can read it
-        return jsonify({"status":"error", "msg": str(e)}), 500
+        return jsonify({"status": "error", "msg": str(e)}), 500
+
 
 
 
