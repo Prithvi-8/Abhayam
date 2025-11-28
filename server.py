@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
 import os
-import yagmail
+import requests
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -18,20 +18,15 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # ---------------------- EMAIL CONFIG ----------------------
-YOUR_EMAIL = os.getenv("MAIL_USER")
-APP_PASSWORD = os.getenv("MAIL_APP_PASSWORD")
+# ---------------------- EMAIL CONFIG (BREVO API) ----------------------
 
-# Email client setup with error handling
-try:
-    yag = yagmail.SMTP(YOUR_EMAIL, APP_PASSWORD)
-    print("✅ Email login successful")
-except Exception as e:
-    print("❌ EMAIL LOGIN FAILED:", e)
-    yag = None   # prevent crash
+BREVO_API_KEY = os.getenv("BREVO_API_KEY")
+RECEIVER_EMAIL = os.getenv("RECEIVER_EMAIL")
+
 
 
 # email client
-yag = yagmail.SMTP(YOUR_EMAIL, APP_PASSWORD)
+
 
 
 # ======================================================
@@ -106,38 +101,44 @@ RULES:
 @app.route("/send_email", methods=["POST"])
 def send_email():
     try:
-        if yag is None:
-            return jsonify({"status": "error", "msg": "Email login failed on server"})
-
         data = request.json
 
-        name = data.get("name", "Unknown")
-        email = data.get("email", "No Email")
-        phone = data.get("phone", "No Phone")
+        name = data.get("name", "")
+        email = data.get("email", "")
+        phone = data.get("phone", "")
         message = data.get("message", "")
 
-        body = f"""
-📩 New ABHAYAM Website Message
+        payload = {
+            "sender": {"name": "ABHAYAM Website", "email": RECEIVER_EMAIL},
+            "to": [{"email": RECEIVER_EMAIL}],
+            "subject": "💌 New Message from ABHAYAM Website",
+            "htmlContent": f"""
+                <h2>New Website Enquiry</h2>
+                <p><b>Name:</b> {name}</p>
+                <p><b>Email:</b> {email}</p>
+                <p><b>Phone:</b> {phone}</p>
+                <p><b>Message:</b><br>{message}</p>
+            """
+        }
 
-Name: {name}
-Email: {email}
-Phone: {phone}
-
-Message:
-{message}
-"""
-
-        yag.send(
-            to=YOUR_EMAIL,
-            subject="📬 New ABHAYAM Website Enquiry",
-            contents=body
+        res = requests.post(
+            "https://api.brevo.com/v3/smtp/email",
+            json=payload,
+            headers={
+                "api-key": BREVO_API_KEY,
+                "Content-Type": "application/json"
+            }
         )
 
-        return jsonify({"status": "success", "msg": "Email sent successfully"})
+        if res.status_code == 201:
+            return jsonify({"status": "success", "msg": "Email sent"})
+        else:
+            return jsonify({"status": "error", "msg": res.text})
 
     except Exception as e:
-        print("EMAIL SEND ERROR:", e)
+        print("EMAIL ERROR:", e)
         return jsonify({"status": "error", "msg": str(e)})
+
 
 
 
