@@ -118,8 +118,8 @@ def send_email():
         url = "https://api.brevo.com/v3/smtp/email"
 
         payload = {
-            "sender": {"name": "ABHAYAM Website", "email": RECEIVER_EMAIL},
-            "to": [{"email": RECEIVER_EMAIL}],
+            "sender": {"name": "ABHAYAM Website", "email": "abhayam888@gmail.com"},  # VERIFIED SENDER
+            "to": [{"email": RECEIVER_EMAIL}],  # RECEIVER
             "subject": "📬 New ABHAYAM Website Enquiry",
             "htmlContent": f"""
                 <h3>New Website Contact Message</h3>
@@ -127,21 +127,14 @@ def send_email():
                 <p><b>Email:</b> {email}</p>
                 <p><b>Phone:</b> {phone}</p>
                 <p><b>Message:</b><br>{message}</p>
-            """
+        """
         }
 
-        headers = {
-            "api-key": BREVO_API_KEY,
-            "Content-Type": "application/json"
-        }
+    if response.status_code in [200, 201, 202]:
+        return jsonify({"status": "success"})
+    else:
+        return jsonify({"status": "error", "msg": response.text}), 500
 
-        response = requests.post(url, json=payload, headers=headers)
-        print("BREVO RESPONSE:", response.text)
-
-        if response.status_code == 201:
-            return jsonify({"status": "success", "msg": "Email sent"})
-        else:
-            return jsonify({"status": "error", "msg": response.text}), 500
 
     except Exception as e:
         print("EMAIL ERROR:", e)
