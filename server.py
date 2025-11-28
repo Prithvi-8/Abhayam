@@ -101,6 +101,8 @@ RULES:
 @cross_origin()
 def send_email():
     try:
+        print("DEBUG BREVO KEY:", BREVO_API_KEY)
+        print("DEBUG RECEIVER:", RECEIVER_EMAIL)
         # CORS preflight
         if request.method == "OPTIONS":
             return jsonify({"status": "ok"}), 200
