@@ -688,7 +688,9 @@
 document.querySelector('.contact-form').addEventListener('submit', async function(e){
     e.preventDefault();
 
-    if (e.submitter === undefined) return; // ignore OPTIONS preflight
+    // prevent weird preflight triggers: only proceed when user actually clicked submit
+    // (browsers usually set e.submitter for real button submits)
+    if (typeof e.submitter === "undefined") return;
 
     const form = e.target;
 
@@ -710,19 +712,20 @@ document.querySelector('.contact-form').addEventListener('submit', async functio
             body: JSON.stringify(data)
         });
 
+        // read JSON safely
         const result = await res.json();
         console.log("FULL RESULT:", result);
 
-        if(result.status === "success") {
+        if (res.ok && result.status === "success") {
             alert("❤️ Your message has been sent successfully!");
             form.reset();
         } else {
             alert("❌ Failed to send email.");
-            console.log("Error:", result);
+            console.error("Server returned error:", result);
         }
     } catch (err) {
         alert("❌ Failed to send email.");
-        console.error("Exception:", err);
+        console.error("Fetch/Network error:", err);
     }
 });
 </script>
