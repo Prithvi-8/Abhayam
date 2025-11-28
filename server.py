@@ -105,6 +105,7 @@ RULES:
 @cross_origin()
 def send_email():
     try:
+        # CORS preflight
         if request.method == "OPTIONS":
             return jsonify({"status": "ok"}), 200
 
@@ -118,8 +119,13 @@ def send_email():
         url = "https://api.brevo.com/v3/smtp/email"
 
         payload = {
-            "sender": {"name": "ABHAYAM Website", "email": "abhayam888@gmail.com"},  # VERIFIED SENDER
-            "to": [{"email": RECEIVER_EMAIL}],  # RECEIVER
+            "sender": {
+                "name": "ABHAYAM Website",
+                "email": "abhayam888@gmail.com"   # VERIFIED SENDER
+            },
+            "to": [
+                {"email": RECEIVER_EMAIL}         # RECEIVES MAIL
+            ],
             "subject": "📬 New ABHAYAM Website Enquiry",
             "htmlContent": f"""
                 <h3>New Website Contact Message</h3>
@@ -127,18 +133,27 @@ def send_email():
                 <p><b>Email:</b> {email}</p>
                 <p><b>Phone:</b> {phone}</p>
                 <p><b>Message:</b><br>{message}</p>
-        """
+            """
         }
 
-    if response.status_code in [200, 201, 202]:
-        return jsonify({"status": "success"})
-    else:
-        return jsonify({"status": "error", "msg": response.text}), 500
+        headers = {
+            "api-key": BREVO_API_KEY,
+            "Content-Type": "application/json"
+        }
 
+        response = requests.post(url, json=payload, headers=headers)
+        print("BREVO RESPONSE:", response.text)
+
+        # Brevo returns 202 for success — accept all 2xx
+        if response.status_code in [200, 201, 202]:
+            return jsonify({"status": "success", "msg": "Email sent"})
+        else:
+            return jsonify({"status": "error", "msg": response.text}), 500
 
     except Exception as e:
         print("EMAIL ERROR:", e)
         return jsonify({"status": "error", "msg": str(e)}), 500
+
 
 
 
