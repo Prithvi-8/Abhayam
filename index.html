@@ -688,6 +688,8 @@
 document.querySelector('.contact-form').addEventListener('submit', async function(e){
     e.preventDefault();
 
+    if (e.submitter === undefined) return; // ignore OPTIONS preflight
+
     const form = e.target;
 
     const data = {
@@ -700,25 +702,31 @@ document.querySelector('.contact-form').addEventListener('submit', async functio
     try {
         const res = await fetch("https://abhayam-backend.onrender.com/send_email", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            mode: "cors",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify(data)
         });
 
         const result = await res.json();
+        console.log("FULL RESULT:", result);
 
         if(result.status === "success") {
             alert("❤️ Your message has been sent successfully!");
             form.reset();
         } else {
             alert("❌ Failed to send email.");
-            console.log(result);
+            console.log("Error:", result);
         }
     } catch (err) {
         alert("❌ Failed to send email.");
-        console.error(err);
+        console.error("Exception:", err);
     }
 });
 </script>
+
 
 
     <!-- QR Code Modal -->
