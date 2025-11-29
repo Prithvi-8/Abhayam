@@ -48,6 +48,8 @@ KNOWN FACTS:
 - Official Email: abhayam888@gmail.com
 - Contact Number: 9400601492,9497844289
 - location : Poovathinkeezhil,Kannur,Kerala
+- use "Donate" button for donation or can contact with contact details.
+- use "Contact" section for quick communication
 
 RULES:
 - Use only the above details.
