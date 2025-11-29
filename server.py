@@ -46,8 +46,8 @@ KNOWN FACTS:
 - Conducts free healthcare camps.
 - Helps families through funds and services.
 - Official Email: abhayam888@gmail.com
-- Contact Number: 9400601492
-- GPay Number: 9400601492
+- Contact Number: 9400601492,9497844289
+- location : Poovathinkeezhil,Kannur,Kerala
 
 RULES:
 - Use only the above details.
