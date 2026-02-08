@@ -22,7 +22,7 @@ Frontend:
 - JavaScript
 
 Backend:
-- Python (Flask)
+- Python 
 
 ---
 
